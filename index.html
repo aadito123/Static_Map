@@ -13,47 +13,108 @@
     <!--The div element for the map -->
     <div id="map"></div>
     <script>
+/*
+ * Displays the static map using location data in database and Google Maps.
+ * TODO:
+ * x Connect Google Maps correctly.
+ * x Test for correct formatting of location data
+ * x Clean up and simplify
+ * x Prepare for dynamic map development
+*/
+
+// latitude and longitude of HK
 var hongkong = {lat: 22.344, lng: 114.036};
 
+/*
+ * Initializes the map on the screen and gets the location data
+ * TODO:
+ * x Clean-up, potentially rewrite callback style to avoid callback hell and ambiguity
+ * x test functionality
+*/ 
 function initMap() {
-  var infoWindow = new google.maps.InfoWindow;
-  var map = new google.maps.Map(
-    document.getElementById('map'), {zoom: 10, center: hongkong, mapTypeId: google.maps.MapTypeId.ROADMAP});
 
-  makeRequest('get_locations.php', function(data){
-    console.log(data);
-    var data = JSON.parse(data);
-    for (var i = 0; i < data.length; i++) {
-      console.log("data: ", data[i]);
-      displayLocation(data[i]);
-    }});
+    // creates an infowindow **what is purpose**
+    var infoWindow = new google.maps.InfoWindow;
+
+    // creates the map, focused on HK in roadmap style and assigns it to #map component
+    var map = new google.maps.Map(
+        document.getElementById('map'), {zoom: 10, center: hongkong, mapTypeId: google.maps.MapTypeId.ROADMAP});
+    
+    // calls makeRequest in order to get the location data from database
+    makeRequest('get_locations.php', function(data){
+        
+        // debugging
+        console.log(data);
+
+        // parse data **issues here probably**
+        var data = JSON.parse(data);
+
+        // for each data, display a marker
+        for (var i = 0; i < data.length; i++) {
+
+            // debugging
+            console.log("data: ", data[i]);
+
+            // display single marker
+            displayLocation(data[i]);
+        }
+    });
 }
 
+/*
+ * Requests data from get_requests.php for use in initMap()
+ * TODO:
+ * x Rewrite using AJAX, or remove and rewrite in initmap to avoid callback
+*/
 function makeRequest(url, callback) {
-  var request = new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
-  request.onreadystatechange = function() {
-    if (request.readyState == 4 && request.status == 200) {
-      callback(request.responseText);      
+
+    // make a request
+    var request = new XMLHttpRequest(); // IE7+, Firefox, Chrome, Opera, Safari
+
+    // **don't understand this
+    request.onreadystatechange = function() {
+
+        if (request.readyState == 4 && request.status == 200) {
+            callback(request.responseText);      
+        }
     }
-  }
-  request.open("GET", url, true);
-  request.send();
+    
+    // open a get request to get_locations.php
+    request.open("GET", url, true);
+    
+    // send the request
+    request.send();
 }
 
+/*
+ * Displays an information window and marker for each piece of location data
+ * TODO:
+ * x test functionality
+*/
 function displayLocation(location) {
-  var content = '<div class="infoWindow"><strong>' + location.type + '</strong>' +
-    '<br/>' + location.address +'</div>';
-  
-  var position = new google.maps.LatLng(parseFloat(location.address[0]), parseFloat(location.address[1]));
-  var marker = new google.maps.Marker({
-    map: map,
-    position: position,
-    title: location.name,
-  });
 
-  google.maps.event.addListener(marker, 'click', function() {
-    infowindow.setContent(content);
-    infowindow.open(map, marker);
+    // creates the content for infowindow display
+    var content = '<div class="infoWindow"><strong>' + location.type + '</strong>' +
+        '<br/>' + location.address +'</div>';
+
+    // get the position of the location in Google Maps format  
+    var position = new google.maps.LatLng(parseFloat(location.address[0]), parseFloat(location.address[1]));
+
+    // create marker on #map component using above position with name as title
+    var marker = new google.maps.Marker({
+        map: map,
+        position: position,
+        title: location.name,
+    });
+    
+    // when marker is clicked, display infowindow
+    google.maps.event.addListener(marker, 'click', function() {
+
+        // set the content
+        infowindow.setContent(content);
+
+        // display
+        infowindow.open(map, marker);
     });
 }
 
