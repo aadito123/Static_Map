@@ -1,0 +1,8 @@
+    request.onreadystatechange = function() {
+        if (request.readyState == 4 && request.status == 200) {
+            callback(request);
+        }
+    }
+
+new google.maps.LatLng(parseFloat(location.address[0]), parseFloat(location.address[1]))
+
