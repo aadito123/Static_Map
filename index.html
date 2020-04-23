@@ -47,7 +47,7 @@ function initMap() {
         console.log(data);
 
         // parse data **issues here probably**
-        var data = JSON.parse(data);
+        var data = JSON.parse(data.responseText);
 
         // for each data, display a marker
         for (var i = 0; i < data.length; i++) {
