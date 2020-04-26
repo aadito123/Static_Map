@@ -1,7 +1,4 @@
 <?php
-/*
- * Includes paramaters for accessing local database using PDO
-*/
 $server     = 'localhost';
 $username   = 'root';
 $password   = 'password123';

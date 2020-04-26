@@ -46,6 +46,7 @@
 
         // calls makeRequest in order to get the location data from database
         makeRequest("get_locations.php", function (data) {
+          
           // parse data **issues here probably**
           var data = JSON.parse(data);
 
@@ -86,17 +87,19 @@
        * x test functionality
        */
       function displayLocation(location) {
+        let address = location.coords.split(",");
+        var lati = parseFloat(address[0]);
+        var longi = parseFloat(address[1]);
         // creates the content for infowindow display
         var content =
           '<div class="infoWindow"><strong>' +
-          location.type +
+          location.number +
           "</strong>" +
           "<br/>" +
-          location.address +
+          lati.toFixed(4) + "<br/>" + longi.toFixed(4) + "<br/>" +
           "</div>";
 
         // get the position of the location in Google Maps format
-        let address = location.address.split(",");
         var position = {
           lat: parseFloat(address[0]),
           lng: parseFloat(address[1]),
@@ -106,7 +109,7 @@
         var marker = new google.maps.Marker({
           map: map,
           position: position,
-          title: location.name,
+          title: location.name
         });
 
         // when marker is clicked, display infowindow
